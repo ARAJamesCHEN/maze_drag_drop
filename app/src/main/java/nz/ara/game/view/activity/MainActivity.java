@@ -304,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
 
         DisplayParams  displayParams = DisplayParams.getInstance(context);
         mWidth =  DisplayUtil.dip2px(342, displayParams.scale);//currentDisplay.getWidth();
-        mHeight = DisplayUtil.dip2px(340, displayParams.scale);//currentDisplay.getHeight();
+        mHeight = DisplayUtil.dip2px(342, displayParams.scale);//currentDisplay.getHeight();
 
         this.stepWidthX = mWidth/(countX);
         this.stepWidthY = mHeight/(countY);
@@ -614,8 +614,9 @@ public class MainActivity extends AppCompatActivity {
                             if(isLoadSuccessful){
                                 isLoadSuccessful = false;
                             }
-                            minView.invalidate();
-                            theView.invalidate();
+
+                            drawRoleByImageView(theView,   getResources().getString(R.string.ROLE_TYPE_THESEUS));
+                            drawRoleByImageView(minView,   getResources().getString(R.string.ROLE_TYPE_MINOTAUR));
                         }
 
                     } catch (InterruptedException e){
