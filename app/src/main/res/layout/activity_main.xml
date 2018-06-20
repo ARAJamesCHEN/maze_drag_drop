@@ -27,36 +27,26 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <nz.ara.game.view.views.MapView
-                id="@+id/mapview"
+
+            <ImageView id="@+id/mapview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#ffffff"
-                app:itemsWallAboveStr="@{mainViewModel.wallAbovePointListStr}"
-                app:itemsWallLeftStr="@{mainViewModel.wallLeftPointListStr}"
-                app:wallSquareStr="@{mainViewModel.wallSquareStr}">
+                />
 
-
-            </nz.ara.game.view.views.MapView>
-
-            <nz.ara.game.view.views.RoleView
-                id="@+id/theview"
+            <ImageView id="@+id/theview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:text="@string/ROLE_TYPE_THESEUS"
-                app:heightStr="@{mainViewModel.heightStr}"
-                app:pointStr="@{mainViewModel.thePointStr}"
-                app:wallSquareStr="@{mainViewModel.wallSquareStr}" />
+                />
 
-            <nz.ara.game.view.views.RoleView
-                id="@+id/minview"
+            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:text="@string/ROLE_TYPE_MINOTAUR"
-                app:pointStr="@{mainViewModel.minPointStr}"
-                app:wallSquareStr="@{mainViewModel.wallSquareStr}" />
+                />
 
         </FrameLayout>
 

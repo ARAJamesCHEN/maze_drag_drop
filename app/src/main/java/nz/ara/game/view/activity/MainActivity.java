@@ -1,22 +1,31 @@
 package nz.ara.game.view.activity;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.util.Log;
 
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -26,6 +35,9 @@ import com.example.yac0105.game.databinding.ActivityMainBinding;
 import java.io.File;
 
 import nz.ara.game.model.em.constvalue.Const;
+import nz.ara.game.util.DisplayParams;
+import nz.ara.game.util.DisplayUtil;
+import nz.ara.game.view.adapter.ViewBindingAdapter;
 import nz.ara.game.view.views.MapView;
 import nz.ara.game.view.views.RoleView;
 import nz.ara.game.viewmodel.MainViewModel;
@@ -36,11 +48,44 @@ public class MainActivity extends AppCompatActivity {
 
     private Spinner level_spinner;
 
-    private MapView mapView;
+    private ImageView mapView1;
 
-    private RoleView theView;
+    private ImageView theView;
 
-    private RoleView minView;
+    private ImageView minView;
+
+    private int stepWidthX = 100;
+
+    private int stepWidthY = 100;
+
+    private int startPointX = 100;
+
+    private int startPointY = 200;
+
+    private String itemsWallLeftStr;
+
+    private String itemsWallAboveStr;
+
+    private String thePointStr;
+
+    private String minPointStr;
+
+    private Paint drawPaint;
+
+    Canvas canvas;
+
+    private int mHeight = 100;
+    private int mWidth = 100;
+
+    private String heightStr;
+
+    private String wallSquareStr;
+
+    private String pointStr;
+
+    private int pointStrX;
+
+    private int pointStrY;
 
     private TextView textViewName;
 
@@ -90,16 +135,16 @@ public class MainActivity extends AppCompatActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        mapView = findViewById(R.id.mapview);
+        mapView1 = findViewById(R.id.mapview);
 
-        if(mapView == null){
+        if(mapView1 == null){
             FrameLayout f = findViewById(R.id.frameLayout);
 
-            mapView = (MapView)f.getChildAt(0);
+            mapView1 = (ImageView) f.getChildAt(0);
 
-            theView = (RoleView)f.getChildAt(1);
+            theView = (ImageView) f.getChildAt(1);
 
-            minView = (RoleView)f.getChildAt(2);
+            minView = (ImageView)f.getChildAt(2);
 
             theView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -109,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
 
 
         level_spinner = findViewById(R.id.level_spinner);
@@ -187,15 +233,175 @@ public class MainActivity extends AppCompatActivity {
             mainViewModel = new MainViewModel(this,level_string);
         }
 
+        this.drawMapByImageView();
+
+        this.drawRoleByImageView(theView,   getResources().getString(R.string.ROLE_TYPE_THESEUS));
+        this.drawRoleByImageView(minView,   getResources().getString(R.string.ROLE_TYPE_MINOTAUR));
         binding.setMainViewModel(mainViewModel);
 
     }
 
+    private void setParas(){
+        this.thePointStr = mainViewModel.thePointStr.get();
+        this.heightStr =  mainViewModel.heightStr.get();
+        this.itemsWallAboveStr = mainViewModel.wallAbovePointListStr.get();
+        this.itemsWallLeftStr = mainViewModel.wallLeftPointListStr.get();
+        this.minPointStr = mainViewModel.minPointStr.get();
+        this.wallSquareStr =  mainViewModel.wallSquareStr.get();
+    }
+
+    private void drawMapByImageView(){
+        this.drawMapByAttrs();
+        this.setParas();
+        this.calParas();
+        Bitmap bitmap = Bitmap.createBitmap(mWidth, (int) mWidth,
+                Bitmap.Config.ARGB_4444);
+        canvas = new Canvas(bitmap);
+
+        this.drawMap(canvas, this.itemsWallAboveStr, getResources().getString(R.string.WALL_TYPE_ABOVE));
+        this.drawMap(canvas,this.itemsWallLeftStr, getResources().getString(R.string.WALL_TYPE_LEFT));
+
+        mapView1.setImageBitmap(bitmap);
+
+        mapView1.invalidate();
+    }
+
+    private void drawRoleByImageView(ImageView imageView, String roleStr){
+        this.setParas();
+        //this.calParas();
+
+        Bitmap bitmap = Bitmap.createBitmap(mWidth,  mWidth,
+                Bitmap.Config.ARGB_4444);
+        canvas = new Canvas(bitmap);
+
+        if(roleStr!=null && roleStr.equals(getResources().getString(R.string.ROLE_TYPE_THESEUS))){
+            this.drapRole(canvas, this.thePointStr, roleStr );
+        }else if(roleStr!=null && roleStr.equals(getResources().getString(R.string.ROLE_TYPE_MINOTAUR))){
+            this.drapRole(canvas, this.minPointStr, roleStr );
+        }else{
+            Log.e(TAG, "Error Type:" + roleStr);
+        }
+
+        imageView.setImageBitmap(bitmap);
+        imageView.invalidate();
+    }
+
+    private void drawMapByAttrs(){
+        drawPaint = new Paint(Paint.DITHER_FLAG);
+        drawPaint.setAntiAlias(true);
+        drawPaint.setColor(Color.BLACK);
+        drawPaint.setStrokeWidth(5);
+        drawPaint.setStyle(Paint.Style.STROKE);
+        drawPaint.setStrokeJoin(Paint.Join.ROUND);
+    }
+
+    private void  calParas(){
+
+        int countX = 4;
+        int countY = 4;
+
+        if(wallSquareStr!=null && wallSquareStr.trim().length()>0){
+            Log.d(TAG, "Wall suare:" + wallSquareStr);
+
+            String[] wallSqurArray = wallSquareStr.split(",");
+
+            countX = Integer.parseInt(wallSqurArray[0]);
+            countY = Integer.parseInt(wallSqurArray[1]);
+
+        }
+
+        Display currentDisplay = getWindowManager().getDefaultDisplay();
+
+
+        DisplayParams  displayParams = DisplayParams.getInstance(context);
+        mWidth =  DisplayUtil.dip2px(342, displayParams.scale);//currentDisplay.getWidth();
+        mHeight = DisplayUtil.dip2px(340, displayParams.scale);//currentDisplay.getHeight();
+
+        this.stepWidthX = mWidth/(countX);
+        this.stepWidthY = mHeight/(countY);
+
+        this.startPointX = this.stepWidthX;
+
+        TextView v = findViewById(R.id.textView_move_name);
+
+        int hTx = v.getMeasuredHeight();
+        this.startPointY = hTx + 12 + this.stepWidthY/2;
+    }
+
+    private void drawMap(Canvas canvas, String wallStr, String type){
+        if(wallStr!=null && wallStr.trim().length()>0){
+            String[] wallStrArray = wallStr.split("\\|");
+
+            for(String pointStr : wallStrArray){
+
+                String[] pointStrArray = pointStr.split(",");
+
+                int pointX = Integer.parseInt(pointStrArray[0]);
+                int pointY = Integer.parseInt(pointStrArray[1]);
+                Log.d(TAG, "Point: " + pointX + "," + pointY);
+
+                int drawPointX = startPointX + pointX*this.stepWidthX - this.stepWidthX/2;
+                int drawPointY = startPointY + pointY*this.stepWidthX - this.stepWidthY/2;
+
+                if(type!=null && type.equals(getResources().getString(R.string.WALL_TYPE_ABOVE))){
+                    canvas.drawLine(drawPointX, drawPointY, drawPointX + this.stepWidthX, drawPointY, drawPaint);
+                }else if(type!=null && type.equals(getResources().getString(R.string.WALL_TYPE_LEFT))){
+                    canvas.drawLine(drawPointX, drawPointY, drawPointX, drawPointY + this.stepWidthY, drawPaint);
+                }else{
+                    Log.e(TAG, "Error Type:" + type);
+                }
+
+            }
+
+        }
+    }
+
+    private void drapRole(Canvas canvas, String pointStr, String type){
+        if(pointStr!=null && pointStr.trim().length()>0){
+
+            String[] pointStrArray = pointStr.split(",");
+
+            int pointX = Integer.parseInt(pointStrArray[0]);
+            int pointY = Integer.parseInt(pointStrArray[1]);
+
+            int left = startPointX + pointX*this.stepWidthX - this.stepWidthX/2 + 5;
+            int top =  startPointY + pointY*this.stepWidthY - this.stepWidthY/2 + 5;
+            int right = startPointX + pointX*this.stepWidthX + this.stepWidthX/2 - 5;
+            int bottom = startPointY + pointY*this.stepWidthY + this.stepWidthY/2 - 5;
+
+
+            Rect rectangle = new Rect(left,top,right,bottom);
+
+
+            Bitmap bitmap = null;
+
+
+            if(type!=null && type.equals(getResources().getString(R.string.ROLE_TYPE_THESEUS))){
+
+                rolePointXShort = left;
+                rolePointYShort = top;
+                rolePointXLong = right;
+                rolePointYLong = bottom;
+
+                bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.theseus);
+
+            }else if(type!=null && type.equals(getResources().getString(R.string.ROLE_TYPE_MINOTAUR))){
+                bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.minotaur);
+            }else{
+                Log.e(TAG, "Error Type:" + type);
+                return;
+            }
+
+            canvas.drawBitmap(bitmap, null, rectangle, null);
+
+
+        }
+
+
+
+    }
+
     private boolean roleViewOnTouched(MotionEvent event){
-        rolePointXShort = theView.getRolePointXShort();
-        rolePointXLong = theView.getRolePointXLong();
-        rolePointYShort = theView.getRolePointYShort();
-        rolePointYLong = theView.getRolePointYLong();
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -203,7 +409,8 @@ public class MainActivity extends AppCompatActivity {
                 startY=event.getY();
 
                 if(mainViewModel.moveThe(rolePointXShort,rolePointXLong,rolePointYShort,rolePointYLong,startX,startY)){
-                    theView.invalidate();
+
+                    this.drawRoleByImageView(theView,   getResources().getString(R.string.ROLE_TYPE_THESEUS));
 
                     if(mainViewModel.getGameModel().getTheseus().isHasWon()){
                         playWin();
@@ -218,7 +425,7 @@ public class MainActivity extends AppCompatActivity {
                         minKillTheDialog();
                     }
 
-                    minView.invalidate();
+                    this.drawRoleByImageView(minView,   getResources().getString(R.string.ROLE_TYPE_MINOTAUR));
                 }
 
                 break;
@@ -234,7 +441,8 @@ public class MainActivity extends AppCompatActivity {
                         minKillTheDialog();
                     }
 
-                    minView.invalidate();
+                    this.drawRoleByImageView(minView,   getResources().getString(R.string.ROLE_TYPE_MINOTAUR));
+
                 }
                 break;
             default:
@@ -259,9 +467,9 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 mainViewModel.initGameImpl(aNewlevel_string);
                 theView.bringToFront();
-                mapView.invalidate();
-                theView.invalidate();
-                minView.invalidate();
+                this.drawMapByImageView();
+                this.drawRoleByImageView(theView,   getResources().getString(R.string.ROLE_TYPE_THESEUS));
+                this.drawRoleByImageView(minView,   getResources().getString(R.string.ROLE_TYPE_MINOTAUR));
             }
         }
     }
@@ -269,9 +477,9 @@ public class MainActivity extends AppCompatActivity {
     private void resetButtonClicked(){
         mainViewModel.initGameImpl(level_string);
         theView.bringToFront();
-        mapView.invalidate();
-        theView.invalidate();
-        minView.invalidate();
+        this.drawMapByImageView();
+        this.drawRoleByImageView(theView,   getResources().getString(R.string.ROLE_TYPE_THESEUS));
+        this.drawRoleByImageView(minView,   getResources().getString(R.string.ROLE_TYPE_MINOTAUR));
     }
 
     private void pauseButtonClicked(){
@@ -286,7 +494,8 @@ public class MainActivity extends AppCompatActivity {
             minKillTheDialog();
         }
 
-        minView.invalidate();
+        this.drawRoleByImageView(minView,   getResources().getString(R.string.ROLE_TYPE_MINOTAUR));
+
     }
 
     private void saveButtonClicked(){

@@ -4,9 +4,11 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://C:\Users\yac0105\OneDrive - Ara Institute of Canterbury\2018Semester1\282\ASS\Ass2\1MyWorks\Project\0530\balabalahong\app\app.iml" filepath="C:\Users\yac0105\OneDrive - Ara Institute of Canterbury\2018Semester1\282\ASS\Ass2\1MyWorks\Project\0530\balabalahong\app\app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/balabalahong.iml" filepath="$PROJECT_DIR$/balabalahong.iml" />
+      <module fileurl="file://C:\Users\yac0105\OneDrive - Ara Institute of Canterbury\2018Semester1\282\ASS\Ass2\1MyWorks\1NewPro\Third\0620\maze_drap_drop\app\app.iml" filepath="C:\Users\yac0105\OneDrive - Ara Institute of Canterbury\2018Semester1\282\ASS\Ass2\1MyWorks\1NewPro\Third\0620\maze_drap_drop\app\app.iml" />
+      <module fileurl="file://C:\Users\yac0105\OneDrive - Ara Institute of Canterbury\2018Semester1\282\ASS\Ass2\1MyWorks\1NewPro\Third\0620\maze_drap_drop\balabalahong.iml" filepath="C:\Users\yac0105\OneDrive - Ara Institute of Canterbury\2018Semester1\282\ASS\Ass2\1MyWorks\1NewPro\Third\0620\maze_drap_drop\balabalahong.iml" />
       <module fileurl="file://C:\Users\yac0105\OneDrive - Ara Institute of Canterbury\2018Semester1\282\ASS\Ass2\1MyWorks\Project\0530\balabalahong\balabalahong.iml" filepath="C:\Users\yac0105\OneDrive - Ara Institute of Canterbury\2018Semester1\282\ASS\Ass2\1MyWorks\Project\0530\balabalahong\balabalahong.iml" />
       <module fileurl="file://C:\Users\yac0105\OneDrive - Ara Institute of Canterbury\2018Semester1\282\ASS\Ass2\1MyWorks\Project\0514\balabalahong\game.iml" filepath="C:\Users\yac0105\OneDrive - Ara Institute of Canterbury\2018Semester1\282\ASS\Ass2\1MyWorks\Project\0514\balabalahong\game.iml" />
+      <module fileurl="file://$PROJECT_DIR$/maze_drap_drop.iml" filepath="$PROJECT_DIR$/maze_drap_drop.iml" />
     </modules>
   </component>
 </project>
