@@ -77,17 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private int mHeight = 100;
     private int mWidth = 100;
 
-    private String heightStr;
-
     private String wallSquareStr;
-
-    private String pointStr;
-
-    private int pointStrX;
-
-    private int pointStrY;
-
-    private TextView textViewName;
 
     private Button reset;
 
@@ -243,7 +233,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void setParas(){
         this.thePointStr = mainViewModel.thePointStr.get();
-        this.heightStr =  mainViewModel.heightStr.get();
         this.itemsWallAboveStr = mainViewModel.wallAbovePointListStr.get();
         this.itemsWallLeftStr = mainViewModel.wallLeftPointListStr.get();
         this.minPointStr = mainViewModel.minPointStr.get();
