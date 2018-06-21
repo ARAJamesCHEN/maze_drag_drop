@@ -1,7 +1,6 @@
 package nz.ara.game.view.activity;
 
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -37,9 +36,6 @@ import java.io.File;
 import nz.ara.game.model.em.constvalue.Const;
 import nz.ara.game.util.DisplayParams;
 import nz.ara.game.util.DisplayUtil;
-import nz.ara.game.view.adapter.ViewBindingAdapter;
-import nz.ara.game.view.views.MapView;
-import nz.ara.game.view.views.RoleView;
 import nz.ara.game.viewmodel.MainViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -284,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
     }
 
-    private void  calParas(){
+    private void    calParas(){
 
         int countX = 4;
         int countY = 4;
@@ -393,6 +389,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean roleViewOnTouched(MotionEvent event){
 
         switch (event.getAction()) {
+            case MotionEvent.ACTION_SCROLL:
+                 break;
             case MotionEvent.ACTION_DOWN:
                 startX=event.getX();
                 startY=event.getY();

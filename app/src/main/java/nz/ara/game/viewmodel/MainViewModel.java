@@ -1,31 +1,21 @@
 package nz.ara.game.viewmodel;
 
-import android.app.Activity;
 import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import android.databinding.BindingAdapter;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableField;
-import android.databinding.ObservableInt;
 import android.databinding.ObservableList;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 
 import com.example.yac0105.game.BR;
-import com.example.yac0105.game.R;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import nz.ara.game.model.em.constvalue.Const;
 import nz.ara.game.model.em.direction.Direction;
 import nz.ara.game.model.impl.game.GameImpl;
 import nz.ara.game.model.in.point.Point;
-import nz.ara.game.model.util.tools.UtilTools;
-import nz.ara.game.view.views.MapView;
 
 /**
  * Created by yac0105 on 18/05/2018.
